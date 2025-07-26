@@ -12,3 +12,6 @@ __all__ = [
     "transform_silver_to_gold",
     "generate_visualizations",
 ]
+
+
+## how to use: from src import load_data, transform_bronze_to_silver
