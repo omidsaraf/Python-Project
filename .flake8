@@ -5,7 +5,7 @@
 max-line-length = 88
 
 # Exclude virtual environments, data folders, build artifacts
-exclude = 
+exclude =
     .git,
     __pycache__,
     build,
@@ -23,7 +23,7 @@ exclude =
 select = B,C,E,F,W,T4,B9
 
 # Ignore specific warning types to reduce noise (can be tuned)
-ignore = 
+ignore =
     E203,  # Whitespace before ':', conflicts with black
     E266,  # Too many leading '#' for block comments
     E501,  # Line length (Black handles this)
@@ -33,8 +33,5 @@ ignore =
 show-source = true
 
 # Enable per-file-ignores if needed (e.g. for tests or notebooks)
-per-file-ignores = 
+per-file-ignores =
     tests/*: S101  # Allow assertions in tests
-
-
-
