@@ -4,12 +4,30 @@ from pathlib import Path
 import pandas as pd
 import shutil
 import logging
-from typing import List
+from typing import List, Dict
 from src.utils import validate_schema
 
 logger = logging.getLogger(__name__)
 
-def ingest_files(input_dir: str, output_dir: str, schema: dict, supported_formats: List[str] = ['csv', 'json']) -> pd.DataFrame:
+def ingest_files(
+    input_dir: str,
+    output_dir: str,
+    schema: Dict,
+    supported_formats: List[str] = ['csv', 'json']
+) -> pd.DataFrame:
+    """
+    Ingests data files from input_dir, validates schema, copies originals to output_dir (bronze zone),
+    and returns concatenated DataFrame of valid data.
+    
+    Parameters:
+        input_dir (str): Path to source raw files.
+        output_dir (str): Path to store original files for lineage (bronze layer).
+        schema (dict): Expected schema for validation.
+        supported_formats (List[str]): List of file extensions to ingest (default: ['csv', 'json']).
+    
+    Returns:
+        pd.DataFrame: Concatenated DataFrame of ingested and validated files. Empty if none.
+    """
     input_path = Path(input_dir)
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
@@ -19,28 +37,32 @@ def ingest_files(input_dir: str, output_dir: str, schema: dict, supported_format
         return pd.DataFrame()
 
     all_data = []
+    files_processed = 0
     for ext in supported_formats:
-        for file_path in input_path.glob(f'*.{ext}'):
+        for file_path in sorted(input_path.glob(f'*.{ext}')):
+            files_processed += 1
             try:
                 if ext == 'csv':
                     df = pd.read_csv(file_path)
                 else:
                     df = pd.read_json(file_path, lines=True)
-                
+
                 if not validate_schema(df, schema):
                     logger.warning(f"Schema validation failed for {file_path.name}. Skipping file.")
                     continue
 
-                # Copy original file to bronze folder for lineage
-                dest_file = output_path / file_path.name
-                shutil.copy2(file_path, dest_file)
-                logger.info(f"Ingested and copied {file_path.name} to bronze zone.")
+                try:
+                    dest_file = output_path / file_path.name
+                    shutil.copy2(file_path, dest_file)
+                    logger.info(f"Ingested and copied {file_path.name} to bronze zone.")
+                except Exception as copy_err:
+                    logger.error(f"Failed to copy {file_path.name} to bronze zone: {copy_err}")
+                    continue  # Skip adding to data if we can't preserve lineage
 
                 all_data.append(df)
+
             except Exception as e:
                 logger.error(f"Failed to ingest {file_path.name}: {e}")
 
-    if all_data:
-        return pd.concat(all_data, ignore_index=True)
-    else:
-        return pd.DataFrame()
+    logger.info(f"Processed {files_processed} files from {input_dir}.")
+    return pd.concat(all_data, ignore_index=True) if all_data else pd.DataFrame()
