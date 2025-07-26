@@ -34,3 +34,8 @@ jobs:
       - name: 🧪 Run unit tests with pytest
         run: |
           pytest tests/ --maxfail=3 --disable-warnings -q
+
+      - name: Run Flake8
+        run: |
+          pip install flake8
+          flake8 .
