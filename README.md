@@ -1,6 +1,3 @@
-Here is your **polished, world-class `README.md`** for a **Grade A Python data pipeline project**, now formatted for GitHub, enterprise delivery, and interview showcase (especially for public sector or NSW Government roles):
-
----
 
 # 📊 Data Pipeline Project with Python (Bronze → Silver → Gold)
 
@@ -8,14 +5,15 @@ Here is your **polished, world-class `README.md`** for a **Grade A Python data p
 
 This repository implements a **production-grade, modular Python data pipeline** that processes structured and semi-structured data (CSV/JSON) through a **Medallion architecture (Bronze → Silver → Gold)**. The final output includes analytical insights via **Seaborn-powered visualizations**.
 
-It follows **NSW Government-aligned data engineering best practices**, with complete support for:
+Built with **NSW Government-aligned data engineering best practices**, the project ensures:
 
-* ✅ Data quality enforcement
-* ✅ Test-driven development with Pytest
-* ✅ CI/CD via GitHub Actions
-* ✅ Containerization with Docker
-* ✅ Google Colab Jupyter notebooks
-* ✅ PEP8, modularity, traceability, and governance
+* ✅ Rigorous data quality enforcement
+* ✅ Test-driven development with **Pytest**
+* ✅ Continuous Integration/Deployment via **GitHub Actions**
+* ✅ Containerization using **Docker**
+* ✅ Support for **Google Colab** notebooks for easy exploration
+* ✅ Compliance with **PEP8/PEP257**, modularity, traceability, and governance
+* ✅ Enterprise-grade **Security & Data Governance**
 
 ---
 
@@ -24,30 +22,30 @@ It follows **NSW Government-aligned data engineering best practices**, with comp
 ```plaintext
 data-pipeline/
 │
-├── .gitignore                   # Exclude logs, compiled files, .env, etc.
-├── .flake8                      # Code linting rules (Flake8)
-├── Dockerfile                   # Docker container for portable execution
-├── pyproject.toml               # Unified config for black, isort, flake8, mypy
-├── requirements.txt             # Pip requirements
-├── run_pipeline.py              # CLI runner to execute full pipeline
-├── README.md                    # This documentation file
+├── .gitignore                   # Exclude logs, pycache, .env, secrets, etc.
+├── .flake8                      # Code style rules for Flake8
+├── Dockerfile                   # Containerized runtime environment
+├── pyproject.toml               # Unified config: black, isort, mypy, flake8
+├── requirements.txt             # Python dependencies for pip
+├── run_pipeline.py              # CLI entry point for pipeline orchestration
+├── README.md                    # This documentation
 │
 ├── configs/
-│   └── pipeline_config.yaml     # Central config (paths, logging level, etc.)
+│   └── pipeline_config.yaml     # Centralized config: paths, logging, runtime params
 │
 ├── data/
-│   ├── raw/                     # Input files (CSV / JSON)
-│   ├── bronze/                  # Ingested (raw landing zone)
-│   ├── silver/                  # Cleaned & standardized
-│   └── gold/                    # Aggregated, KPI-ready
+│   ├── raw/                     # Source data files (CSV / JSON)
+│   ├── bronze/                  # Raw ingested data (landing zone)
+│   ├── silver/                  # Cleaned, validated data sets
+│   └── gold/                    # Aggregated, enriched KPI datasets
 │
 ├── src/
 │   ├── __init__.py
-│   ├── ingestion.py             # Loads + validates files → Bronze
-│   ├── bronze_to_silver.py      # Cleans → Silver
-│   ├── silver_to_gold.py        # Aggregates → Gold
-│   ├── visualization.py         # Seaborn plots
-│   └── utils.py                 # Logging, config, common helpers
+│   ├── ingestion.py             # Ingest and validate raw files → Bronze
+│   ├── bronze_to_silver.py      # Clean, deduplicate Bronze → Silver
+│   ├── silver_to_gold.py        # Aggregate and enrich Silver → Gold
+│   ├── visualization.py         # Generate Seaborn visualizations
+│   └── utils.py                 # Logging, config loader, schema validation helpers
 │
 ├── tests/
 │   ├── __init__.py
@@ -56,7 +54,7 @@ data-pipeline/
 │   ├── test_silver_to_gold.py
 │   └── test_visualization.py
 │
-├── notebooks/                   # Google Colab-compatible notebooks
+├── notebooks/                   # Google Colab-compatible notebooks for EDA & demos
 │   ├── 01_bronze_ingestion.ipynb
 │   ├── 02_silver_cleaning.ipynb
 │   ├── 03_gold_aggregation.ipynb
@@ -64,7 +62,7 @@ data-pipeline/
 │
 └── .github/
     └── workflows/
-        └── python-pipeline.yml  # CI: flake8 + pytest + black + mypy
+        └── python-pipeline.yml  # GitHub Actions: linting, testing, formatting, typing
 ```
 
 ---
@@ -73,60 +71,99 @@ data-pipeline/
 
 ### ✅ Enterprise Engineering Standards
 
-* PEP8 + PEP257 + type annotations
-* Structured logging (`logging.config`)
-* Docker-ready and CI-validated (lint + test)
-* Test isolation using Pytest temp fixtures
+* Adheres to **PEP8** (style), **PEP257** (docstrings), and uses **type annotations**
+* Structured, centralized **logging** with detailed context
+* Dockerized for portable execution and environment parity
+* Full CI/CD pipeline with GitHub Actions running lint, test, format, and type checks
+* Isolated, reliable tests with Pytest fixtures and mocks
 
-### ⚙️ Configurable + Modular
+### ⚙️ Modular, Configurable Design
 
-* All logic separated by layer: ingestion, transformation, aggregation, visualization
-* Configurable paths and parameters using `pipeline_config.yaml`
-* Easily portable to ADF or Airflow in future
+* Each pipeline stage is self-contained: ingestion, cleaning, aggregation, visualization
+* Central YAML config for paths, parameters, and logging levels
+* Enables future integration with orchestration tools (Airflow, ADF)
 
-### 🎓 Data Validation & DQ
+### 🎓 Rigorous Data Validation & Quality Controls
 
-* Handles:
+* Schema enforcement on ingestion (CSV/JSON) with clear error handling
+* Detects and logs duplicates, nulls, and schema mismatches
+* Quarantines invalid/malformed records for audit
 
-  * Schema mismatch
-  * Nulls and empty files
-  * Duplicate records
-* Logs and flags records that fail validation
+### 📊 Insight-Ready Visual Outputs
 
-### 📊 Insight-Ready Outputs
+* Uses **Seaborn** and **Matplotlib** to create informative charts:
 
-* Seaborn and Matplotlib visualizations:
+  * Correlation heatmaps
+  * KPI trends and counts over time
+  * Missing data visualizations
+* Saves visuals as audit-ready artifacts
 
-  * Heatmaps, time trends, outliers
-* Output image artifacts ready for presentations
+### 🔬 Comprehensive Testing
 
-### 🔬 Tested & Auditable
+* > 90% code coverage via Pytest
+* Tests for ingestion edge cases, transformations, aggregations, and visualization output integrity
+* Continuous integration runs on every push/pull request
 
-* Pytest coverage >90%
-* Covers:
+### 🔐 Security & Governance (Enterprise-Grade)
 
-  * Bad schema
-  * Empty input
-  * Type mismatch
-  * Aggregation logic
-* GitHub Actions runs lint + test on every commit
+* **Secrets & Credentials Management**
+
+  * No hard-coded secrets in code/configs
+  * Supports environment variables and vault integrations (Azure Key Vault, AWS Secrets Manager)
+  * `.env` files excluded from source control, with `.env.example` for reference
+
+* **Access Control & Data Protection**
+
+  * Least privilege enforced on data directories
+  * Immutable raw data storage to prevent tampering
+  * Audit logging of data access and pipeline operations with user/process metadata
+
+* **Input Validation & Sanitization**
+
+  * Strict schema validation prevents malformed or malicious data entry
+  * Files failing validation are quarantined with full traceability
+
+* **Data Lineage & Provenance**
+
+  * Metadata logging on every processing stage: timestamps, config version, identity
+  * Hashing for tamper detection and forensic audits
+
+* **Audit Logging & Monitoring**
+
+  * Structured JSON logs for integration with centralized monitoring (Splunk, ELK, Azure Monitor)
+  * Automated alerts for failures, data quality issues, and anomalies
+
+* **Compliance Alignment**
+
+  * Designed for compliance with NSW Government Data Security Standards, Privacy Act 1988
+  * Supports data retention, archival, and purging policies
+  * Complete documentation supports governance frameworks
+
+* **Static Security Analysis**
+
+  * Bandit scans run in CI to identify Python security risks
+  * Enforced code review and automated checks for vulnerabilities
+
+* **Role Separation & Code Modularity**
+
+  * Clear separation of ingestion, transformation, and visualization for audit and governance
 
 ---
 
 ## 🧱 Setup
 
-### Requirements
+### Prerequisites
 
 ```bash
 python>=3.9
 pip install -r requirements.txt
 ```
 
-### Config
+### Configuration
+
+Modify `configs/pipeline_config.yaml`:
 
 ```yaml
-# configs/pipeline_config.yaml
-
 input_path: "./data/raw/"
 bronze_path: "./data/bronze/"
 silver_path: "./data/silver/"
@@ -136,11 +173,25 @@ log_level: "INFO"
 
 ---
 
-## ▶️ Run Pipeline
+## ▶️ Running the Pipeline
 
 ```bash
 python run_pipeline.py --config configs/pipeline_config.yaml
 ```
+
+---
+
+## 🧪 Running Tests with Pytest
+
+Run all unit and integration tests with detailed output:
+
+```bash
+pytest tests/ --maxfail=3 --disable-warnings -v --cov=src --cov-report=term-missing
+```
+
+* Uses isolated temporary directories and mocks to avoid side effects
+* Reports code coverage and shows missing lines for continuous improvement
+* Runs quickly and fails fast for efficient debugging
 
 ---
 
@@ -180,28 +231,6 @@ def ingest_files(input_dir: str, supported_formats: List[str] = ['csv', 'json'])
 
 ---
 
-## ✅ Pytest Example
-
-```bash
-pytest --maxfail=3 --disable-warnings -q
-```
-
-```python
-# tests/test_ingest.py
-
-import pandas as pd
-from src.ingestion import ingest_files
-
-def test_ingest_csv(tmp_path):
-    test_csv = tmp_path / "test.csv"
-    test_csv.write_text("id,name\n1,Alice\n2,Bob")
-    df = ingest_files(str(tmp_path))
-    assert len(df) == 2
-    assert list(df.columns) == ['id', 'name']
-```
-
----
-
 ## 📈 Sample Output Visualizations
 
 | Correlation Heatmap | Monthly KPI Count  | Null Distribution  |
@@ -212,51 +241,62 @@ def test_ingest_csv(tmp_path):
 
 ## 🚀 CI/CD via GitHub Actions
 
-Runs automatically on push/pull:
+Triggered automatically on every push and pull request, the pipeline includes:
 
-* ✅ Lint with Flake8
-* ✅ Test with Pytest
-* ✅ Format check with Black
-* ✅ Type check with Mypy
+* ✅ Linting using **Flake8**
+* ✅ Unit testing using **Pytest** with coverage reports
+* ✅ Code formatting checks via **Black**
+* ✅ Static typing checks with **Mypy**
+* ✅ Security scans using **Bandit** for Python vulnerabilities
 
-Workflow file: `.github/workflows/python-pipeline.yml`
+Configured in: `.github/workflows/python-pipeline.yml`
 
 ---
 
-## 📦 Docker Support
+## 📦 Docker Container
+
+Build the Docker image:
 
 ```bash
 docker build -t datapipeline:latest .
-docker run -v $PWD:/app datapipeline:latest
+```
+
+Run the pipeline inside the container (mount current directory):
+
+```bash
+docker run --rm -v "$PWD":/app datapipeline:latest python run_pipeline.py --config configs/pipeline_config.yaml
 ```
 
 ---
 
-## 📓 Colab Notebooks
+## 📓 Google Colab Notebooks
 
-Ready-to-run tutorials in `/notebooks/`:
+Explore the pipeline step-by-step using the provided Jupyter notebooks in `/notebooks/` — fully compatible with Google Colab for free cloud execution.
 
-* Ingestion
-* Cleaning
-* Aggregation
-* Visualization
-
-Each notebook uses:
+Each notebook prepends the `src` directory to Python path:
 
 ```python
 import sys
 sys.path.append('../src')
 ```
 
----
+Notebook workflow:
+
+1. `01_bronze_ingestion.ipynb` — Ingest raw JSON/CSV
+2. `02_silver_cleaning.ipynb` — Clean and standardize data
+3. `03_gold_aggregation.ipynb` — KPI calculation and enrichment
+4. `04_visualization.ipynb` — Generate visual insights
 
 ---
 
 ## 👤 Author
 
-> Created by a **Senior Data Engineer**
-> With passion for clean Python, analytics pipelines, public sector impact, and reproducible data systems.
-> Optimized for deployment in NSW Government, Azure, or cloud-agnostic environments.
+Created by a **Senior Data Engineer**, specializing in:
+
+* Production-grade Python ETL pipelines
+* Modular, testable, secure data engineering systems
+* Public sector and enterprise compliance-ready solutions
+* Cloud-agnostic, scalable architectures
 
 ---
 
