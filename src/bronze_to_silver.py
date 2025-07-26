@@ -1,36 +1,32 @@
-import pandas as pd
-import logging
-
-logger = logging.getLogger("nsw_data_pipeline.bronze_to_silver")
-
-def clean_and_standardize(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Cleans and standardizes raw data:
-    - Removes duplicates
-    - Standardizes column names (lowercase, snake_case)
-    - Fills or drops nulls (customize as needed)
-    """
-    if df.empty:
-        logger.warning("Input DataFrame is empty. Skipping cleaning.")
-        return df
-
-    logger.info("Starting data cleaning and standardization...")
-
-    # Lowercase column names and convert spaces to underscores
-    df.columns = [col.lower().replace(' ', '_') for col in df.columns]
-
-    # Drop duplicates
-    before_count = len(df)
+ef clean_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Clean and standardize the ingested raw data."""
+    logger.info("Cleaning data...")
     df = df.drop_duplicates()
-    after_count = len(df)
-    logger.info(f"Removed {before_count - after_count} duplicate records.")
-
-    # Example: Fill missing values for a specific column (customize as needed)
-    # df['email'] = df['email'].fillna('unknown@example.com')
-
-    # Drop records with nulls in critical columns (example)
-    critical_columns = ['customer_id']
-    df = df.dropna(subset=critical_columns)
-    logger.info(f"Data after dropping nulls in critical columns: {len(df)} records.")
-
+    df = df.dropna(how='all')
     return df
+
+# src/silver_to_gold.py
+
+def aggregate_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Aggregate and enrich the cleaned data to prepare final KPIs."""
+    logger.info("Aggregating data...")
+    if 'value' in df.columns:
+        return df.groupby('category').agg({'value': 'sum'}).reset_index()
+    return df
+
+# src/visualization.py
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+def plot_kpis(df: pd.DataFrame, output_path: str):
+    """Generate seaborn bar plot of KPI data."""
+    logger.info("Generating visualization...")
+    plt.figure(figsize=(10, 6))
+    sns.barplot(data=df, x='category', y='value')
+    plt.xticks(rotation=45)
+    plt.title('KPI Summary by Category')
+    plt.tight_layout()
+    plot_file = os.path.join(output_path, "kpi_summary.png")
+    plt.savefig(plot_file)
+    logger.info(f"Visualization saved to {plot_file}")
