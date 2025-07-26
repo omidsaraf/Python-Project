@@ -1,108 +1,132 @@
-# Data Pipeline Project with Python (Bronze → Silver → Gold)
+Here is your **polished, world-class `README.md`** for a **Grade A Python data pipeline project**, now formatted for GitHub, enterprise delivery, and interview showcase (especially for public sector or NSW Government roles):
+
+---
+
+# 📊 Data Pipeline Project with Python (Bronze → Silver → Gold)
 
 ## ✨ Overview
 
-This project delivers a **world-class, production-grade Python data pipeline** built for flexibility, auditability, and analytical readiness. It ingests structured and semi-structured data (CSV, JSON), applies rigorous quality checks, processes it through a **Medallion architecture (Bronze → Silver → Gold)**, and ends with rich **Seaborn-powered visual insights**.
+This repository implements a **production-grade, modular Python data pipeline** that processes structured and semi-structured data (CSV/JSON) through a **Medallion architecture (Bronze → Silver → Gold)**. The final output includes analytical insights via **Seaborn-powered visualizations**.
 
-This project adheres to NSW Government and enterprise data engineering standards across **testing, modularity, logging, CI/CD, version control, and documentation**.
+It follows **NSW Government-aligned data engineering best practices**, with complete support for:
+
+* ✅ Data quality enforcement
+* ✅ Test-driven development with Pytest
+* ✅ CI/CD via GitHub Actions
+* ✅ Containerization with Docker
+* ✅ Google Colab Jupyter notebooks
+* ✅ PEP8, modularity, traceability, and governance
 
 ---
 
 ## ⚖️ Architecture
 
-```
-/data-pipeline/
-|
-|│   .gitignore
-|│   .flake8
-|│   Dockerfile
-|│   pyproject.toml
-|│   requirements.txt
-|│   run_pipeline.py               # CLI runner for full pipeline execution
-|│   README.md
-|
-|├── configs/
-|│   └── pipeline_config.yaml        # Parameterized paths and settings
-|
-|├── data/
-|│   ├── raw/                       # Input source data (JSON / CSV)
-|│   ├── bronze/                    # Raw but ingested
-|│   ├── silver/                    # Cleaned, standardized
-|│   └── gold/                      # Enriched, KPI-ready
-|
-|├── src/
-|│   ├── __init__.py
-|│   ├── ingestion.py               # Ingests + validates files
-|│   ├── bronze_to_silver.py        # Standardizes structure + schema
-|│   ├── silver_to_gold.py          # Enriches + aggregates
-|│   ├── visualization.py           # Seaborn plots
-|│   └── utils.py                   # Logging, config loader, helpers
-|
-|├── tests/
-|│   ├── __init__.py
-|│   ├── test_ingest.py
-|│   ├── test_bronze_to_silver.py
-|│   ├── test_silver_to_gold.py
-|│   └── test_visualization.py
-|
-└── .github/workflows/
-    └── python-pipeline.yml              # CI pipeline with pytest + flake8
+```plaintext
+data-pipeline/
+│
+├── .gitignore                   # Exclude logs, compiled files, .env, etc.
+├── .flake8                      # Code linting rules (Flake8)
+├── Dockerfile                   # Docker container for portable execution
+├── pyproject.toml               # Unified config for black, isort, flake8, mypy
+├── requirements.txt             # Pip requirements
+├── run_pipeline.py              # CLI runner to execute full pipeline
+├── README.md                    # This documentation file
+│
+├── configs/
+│   └── pipeline_config.yaml     # Central config (paths, logging level, etc.)
+│
+├── data/
+│   ├── raw/                     # Input files (CSV / JSON)
+│   ├── bronze/                  # Ingested (raw landing zone)
+│   ├── silver/                  # Cleaned & standardized
+│   └── gold/                    # Aggregated, KPI-ready
+│
+├── src/
+│   ├── __init__.py
+│   ├── ingestion.py             # Loads + validates files → Bronze
+│   ├── bronze_to_silver.py      # Cleans → Silver
+│   ├── silver_to_gold.py        # Aggregates → Gold
+│   ├── visualization.py         # Seaborn plots
+│   └── utils.py                 # Logging, config, common helpers
+│
+├── tests/
+│   ├── __init__.py
+│   ├── test_ingest.py
+│   ├── test_bronze_to_silver.py
+│   ├── test_silver_to_gold.py
+│   └── test_visualization.py
+│
+├── notebooks/                   # Google Colab-compatible notebooks
+│   ├── 01_bronze_ingestion.ipynb
+│   ├── 02_silver_cleaning.ipynb
+│   ├── 03_gold_aggregation.ipynb
+│   └── 04_visualization.ipynb
+│
+└── .github/
+    └── workflows/
+        └── python-pipeline.yml  # CI: flake8 + pytest + black + mypy
 ```
 
 ---
 
 ## 🔗 Key Features
 
-### ✅ Enterprise Best Practices
+### ✅ Enterprise Engineering Standards
 
-* Follows PEP8 + PEP257 + type hinting
-* Dockerized and CI-ready via GitHub Actions
-* Structured logging with root config
-* Test-driven with Pytest fixtures
+* PEP8 + PEP257 + type annotations
+* Structured logging (`logging.config`)
+* Docker-ready and CI-validated (lint + test)
+* Test isolation using Pytest temp fixtures
 
-### ⚙️ Fully Modular
+### ⚙️ Configurable + Modular
 
-* 1 script = 1 logical unit (ETL best practice)
-* Central config (YAML)
-* Composable transformations with pandas
+* All logic separated by layer: ingestion, transformation, aggregation, visualization
+* Configurable paths and parameters using `pipeline_config.yaml`
+* Easily portable to ADF or Airflow in future
 
-### ✍️ Schema & Validation Support
+### 🎓 Data Validation & DQ
 
-* Schema-checked ingestion (CSV & JSON)
-* Clean failover and logging on corrupted/missing records
+* Handles:
 
-### 🎓 Data Quality
+  * Schema mismatch
+  * Nulls and empty files
+  * Duplicate records
+* Logs and flags records that fail validation
 
-* Silver removes nulls/dupes/types
-* Gold adds metrics, flags, KPIs
-* All output is auditable & reproducible
+### 📊 Insight-Ready Outputs
 
-### 🔍 Insight-Ready Visuals
+* Seaborn and Matplotlib visualizations:
 
-* Seaborn + Matplotlib
-* Trend lines, histograms, correlation heatmaps
-* Image export for audit and presentation
+  * Heatmaps, time trends, outliers
+* Output image artifacts ready for presentations
 
-### 🔢 Fully Tested
+### 🔬 Tested & Auditable
 
-* > 90% Pytest test coverage (unit + edge)
-* Tests for schema mismatch, empty files, invalid types, transformation correctness
+* Pytest coverage >90%
+* Covers:
+
+  * Bad schema
+  * Empty input
+  * Type mismatch
+  * Aggregation logic
+* GitHub Actions runs lint + test on every commit
 
 ---
 
-## 🔧 Setup
+## 🧱 Setup
 
-### Prerequisites
+### Requirements
 
 ```bash
 python>=3.9
 pip install -r requirements.txt
 ```
 
-### Configuration
+### Config
 
 ```yaml
 # configs/pipeline_config.yaml
+
 input_path: "./data/raw/"
 bronze_path: "./data/bronze/"
 silver_path: "./data/silver/"
@@ -110,7 +134,9 @@ gold_path: "./data/gold/"
 log_level: "INFO"
 ```
 
-### Run Pipeline
+---
+
+## ▶️ Run Pipeline
 
 ```bash
 python run_pipeline.py --config configs/pipeline_config.yaml
@@ -118,10 +144,17 @@ python run_pipeline.py --config configs/pipeline_config.yaml
 
 ---
 
-## 🌐 Example: Ingestion
+## 📥 Example Python: Ingestion Module
 
 ```python
 # src/ingestion.py
+
+from typing import List
+from pathlib import Path
+import pandas as pd
+import logging
+
+logger = logging.getLogger(__name__)
 
 def ingest_files(input_dir: str, supported_formats: List[str] = ['csv', 'json']) -> pd.DataFrame:
     path = Path(input_dir)
@@ -147,19 +180,20 @@ def ingest_files(input_dir: str, supported_formats: List[str] = ['csv', 'json'])
 
 ---
 
-## 🔬 Testing
+## ✅ Pytest Example
 
 ```bash
 pytest --maxfail=3 --disable-warnings -q
 ```
 
-### Example test
-
 ```python
 # tests/test_ingest.py
 
+import pandas as pd
+from src.ingestion import ingest_files
+
 def test_ingest_csv(tmp_path):
-    test_csv = tmp_path / "sample.csv"
+    test_csv = tmp_path / "test.csv"
     test_csv.write_text("id,name\n1,Alice\n2,Bob")
     df = ingest_files(str(tmp_path))
     assert len(df) == 2
@@ -168,30 +202,61 @@ def test_ingest_csv(tmp_path):
 
 ---
 
-## 📈 Sample Visualization Output
+## 📈 Sample Output Visualizations
 
-| Correlation Heatmap | Monthly Counts      | Nulls by Column    |
-| ------------------- | ------------------- | ------------------ |
-| ![](img/corr.png)   | ![](img/counts.png) | ![](img/nulls.png) |
-
----
-
-## 🌐 CI/CD
-
-Supports GitHub Actions for:
-
-* Linting (`flake8`)
-* Unit tests (`pytest`)
-* Build & artifact packaging (optional Docker)
+| Correlation Heatmap | Monthly KPI Count  | Null Distribution  |
+| ------------------- | ------------------ | ------------------ |
+| ![](img/corr.png)   | ![](img/count.png) | ![](img/nulls.png) |
 
 ---
 
-## 📄 License
+## 🚀 CI/CD via GitHub Actions
 
-MIT License. Use, extend, and contribute freely!
+Runs automatically on push/pull:
+
+* ✅ Lint with Flake8
+* ✅ Test with Pytest
+* ✅ Format check with Black
+* ✅ Type check with Mypy
+
+Workflow file: `.github/workflows/python-pipeline.yml`
 
 ---
 
-## ✨ Author
+## 📦 Docker Support
 
-Crafted by a **Senior Data Engineer** for NSW Government-style production-grade Python/ETL systems with a focus on **modular pipeline design, PySpark extension readiness, and compliance-aligned governance.**
+```bash
+docker build -t datapipeline:latest .
+docker run -v $PWD:/app datapipeline:latest
+```
+
+---
+
+## 📓 Colab Notebooks
+
+Ready-to-run tutorials in `/notebooks/`:
+
+* Ingestion
+* Cleaning
+* Aggregation
+* Visualization
+
+Each notebook uses:
+
+```python
+import sys
+sys.path.append('../src')
+```
+
+---
+
+---
+
+## 👤 Author
+
+> Created by a **Senior Data Engineer**
+> With passion for clean Python, analytics pipelines, public sector impact, and reproducible data systems.
+> Optimized for deployment in NSW Government, Azure, or cloud-agnostic environments.
+
+---
+
