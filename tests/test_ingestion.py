@@ -1,23 +1,23 @@
 import pytest
 import pandas as pd
-from src.ingest import load_data
+from src.ingestion import ingest_files
+from pathlib import Path
 
-def test_load_json(tmp_path):
-    data = [{'id': 1, 'value': 'a'}, {'id': 2, 'value': 'b'}]
-    file = tmp_path / "test.json"
-    pd.DataFrame(data).to_json(file, orient='records')
+def test_ingest_empty_directory(tmp_path):
+    df = ingest_files(str(tmp_path))
+    assert df.empty
 
-    df = load_data(str(file))
-    assert not df.empty
-    assert list(df.columns) == ['id', 'value']
-    assert df.shape[0] == 2
+def test_ingest_csv_file(tmp_path):
+    file = tmp_path / "sample.csv"
+    file.write_text("id,name\n1,Alice\n2,Bob")
+    df = ingest_files(str(tmp_path))
+    assert len(df) == 2
+    assert list(df.columns) == ["id", "name"]
 
-def test_load_csv(tmp_path):
-    data = {'id': [1,2], 'value': ['a','b']}
-    file = tmp_path / "test.csv"
-    pd.DataFrame(data).to_csv(file, index=False)
-
-    df = load_data(str(file))
-    assert not df.empty
-    assert list(df.columns) == ['id', 'value']
-    assert df.shape[0] == 2
+def test_ingest_json_file(tmp_path):
+    file = tmp_path / "sample.json"
+    file.write_text('{"id": 1, "name": "Alice"}\n{"id": 2, "name": "Bob"}')
+    df = ingest_files(str(tmp_path))
+    assert len(df) == 2
+    assert "id" in df.columns
+    assert "name" in df.columns
