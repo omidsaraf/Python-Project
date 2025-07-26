@@ -1,6 +1,6 @@
 
 # 📊 Data Pipeline Project with Python & PySpark
-####(Ingest-> Bronze → Silver → Gold->Visual)
+#### (Ingest-> Bronze → Silver → Gold->Visual)
 
 ## ✨ Overview
 
