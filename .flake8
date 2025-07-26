@@ -8,13 +8,16 @@ max-line-length = 88
 exclude = 
     .git,
     __pycache__,
-    .venv,
-    venv,
     build,
     dist,
+    .venv,
+    env,
+    venv,
+    .env,
     .eggs,
     *.egg-info,
-    data/
+    notebooks,
+    tests
 
 # Enable useful error/warning codes
 select = B,C,E,F,W,T4,B9
@@ -32,3 +35,6 @@ show-source = true
 # Enable per-file-ignores if needed (e.g. for tests or notebooks)
 per-file-ignores = 
     tests/*: S101  # Allow assertions in tests
+
+
+
