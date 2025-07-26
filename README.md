@@ -1,6 +1,12 @@
+Absolutely! Here's your polished, Grade A, world-class README with all suggested improvements applied:
+
+---
 
 # 📊 Data Pipeline Project with Python & PySpark
-#### (Ingest-> Bronze → Silver → Gold->Visual)
+
+#### (Ingest → Bronze → Silver → Gold → Visual)
+
+---
 
 ## ✨ Overview
 
@@ -25,6 +31,7 @@ data-pipeline/
 │
 ├── .gitignore                   # Exclude logs, __pycache__, .env, secrets, etc.
 ├── .env                        # Environment variables for secrets & configs (excluded from repo)
+├── .env.example                # Example env template (committed)
 ├── .flake8                      # Code style rules for Flake8
 ├── Dockerfile                   # Containerized runtime environment
 ├── pyproject.toml               # Unified config: black, isort, mypy, flake8
@@ -40,6 +47,8 @@ data-pipeline/
 │   ├── bronze/                  # Raw ingested data (landing zone)
 │   ├── silver/                  # Cleaned, validated datasets
 │   └── gold/                    # Aggregated, enriched KPI datasets
+│
+├── logs/                       # Pipeline logs (excluded from Git)
 │
 ├── src/
 │   ├── __init__.py
@@ -64,7 +73,7 @@ data-pipeline/
 │
 └── .github/
     └── workflows/
-        └── python-pipeline.yml  # GitHub Actions: linting, testing, formatting, typing
+        └── python-pipeline.yml  # GitHub Actions: linting, testing, formatting, typing, security scans
 ```
 
 ---
@@ -76,7 +85,7 @@ data-pipeline/
 * Adheres to **PEP8** (style), **PEP257** (docstrings), and uses **type annotations**
 * Structured, centralized **logging** with detailed context
 * Dockerized for portable execution and environment parity
-* Full CI/CD pipeline with GitHub Actions running lint, test, format, and type checks
+* Full CI/CD pipeline with GitHub Actions running lint, test, format, type, and security checks
 * Isolated, reliable tests with Pytest fixtures and mocks
 
 ### ⚙️ Modular, Configurable Design
@@ -157,7 +166,7 @@ data-pipeline/
 ### Prerequisites
 
 ```bash
-python >= 3.9
+Python 3.9+
 pip install -r requirements.txt
 ```
 
@@ -199,38 +208,44 @@ pytest tests/ --maxfail=3 --disable-warnings -v --cov=src --cov-report=term-miss
 
 ---
 
-## 📥 Example Python: Ingestion Module
+## 📥 Example Python: Ingestion Module with PySpark
 
 ```python
 # src/ingestion.py
 
 from typing import List
 from pathlib import Path
-import pandas as pd
+from pyspark.sql import SparkSession
+from pyspark.sql.dataframe import DataFrame
 import logging
 
 logger = logging.getLogger(__name__)
+spark = SparkSession.builder.appName("Ingestion").getOrCreate()
 
-def ingest_files(input_dir: str, supported_formats: List[str] = ['csv', 'json']) -> pd.DataFrame:
+def ingest_files(input_dir: str, supported_formats: List[str] = ['csv', 'json']) -> DataFrame:
     path = Path(input_dir)
     if not path.exists():
         logger.error(f"Input directory {input_dir} does not exist.")
-        return pd.DataFrame()
+        return spark.createDataFrame([], schema=None)  # Empty DataFrame
 
-    all_data = []
+    df_list = []
     for ext in supported_formats:
-        for file in path.glob(f'*.{ext}'):
+        files = list(path.glob(f'*.{ext}'))
+        for file in files:
             try:
                 if ext == 'csv':
-                    df = pd.read_csv(file)
-                else:
-                    df = pd.read_json(file, lines=True)
-                all_data.append(df)
+                    df = spark.read.option("header", True).csv(str(file))
+                else:  # json
+                    df = spark.read.json(str(file))
+                df_list.append(df)
                 logger.info(f"Ingested {file.name}")
             except Exception as e:
                 logger.warning(f"Skipping {file.name}: {e}")
 
-    return pd.concat(all_data, ignore_index=True) if all_data else pd.DataFrame()
+    if df_list:
+        return df_list[0].unionByName(*df_list[1:])
+    else:
+        return spark.createDataFrame([], schema=None)
 ```
 
 ---
@@ -296,6 +311,18 @@ Notebook workflow:
 2. `02_silver_cleaning.ipynb` — Clean and standardize data
 3. `03_gold_aggregation.ipynb` — KPI calculation and enrichment
 4. `04_visualization.ipynb` — Generate visual insights
+
+---
+
+## 📜 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## 📃 Code of Conduct
+
+Please see [CODE\_OF\_CONDUCT.md](CODE_OF_CONDUCT.md) for guidelines on contributing.
 
 ---
 
