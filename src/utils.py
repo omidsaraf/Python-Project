@@ -39,7 +39,7 @@ def setup_logging(default_path: str = 'configs/logging.yaml', default_level: int
     """
     if os.path.exists(default_path):
         with open(default_path, 'rt') as f:
-            config = yaml.safe_load(f.read())
+            config = yaml.safe_load(f)  # fixed here: pass file handle directly
         logging.config.dictConfig(config)
     else:
         logging.basicConfig(
