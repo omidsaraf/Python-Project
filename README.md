@@ -316,15 +316,6 @@ Notebook workflow:
 
 ## 📜 License
 
-This project is licensed under the [MIT License](LICENSE).
-
----
-
-## 📃 Code of Conduct
-
-Please see [CODE\_OF\_CONDUCT.md](CODE_OF_CONDUCT.md) for guidelines on contributing.
-
----
 
 ## 👤 Author
 
