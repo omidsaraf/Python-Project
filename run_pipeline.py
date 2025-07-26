@@ -12,15 +12,15 @@ from src.visualization import generate_visualizations
 
 def main(config_path: Path) -> None:
     # Load config and setup logging
-    config = load_config(config_path)
+    config = load_config(str(config_path))
     setup_logging(config.get("log_level", "INFO"))
     logger = logging.getLogger(__name__)
 
     logger.info("Starting Data Pipeline Execution")
 
-    # Ingest raw data → Bronze
+    # Ingest raw data → Bronze layer
     logger.info("Starting ingestion to Bronze layer")
-    bronze_df = ingest_files(config["input_path"])
+    bronze_df = ingest_files(config["input_path"], config["bronze_path"], config.get("schema", {}))
     if bronze_df.empty:
         logger.warning("No data ingested. Exiting pipeline.")
         sys.exit(1)
@@ -51,7 +51,7 @@ def main(config_path: Path) -> None:
 
     # Generate visualizations
     logger.info("Generating visualizations")
-    reports_path = Path("reports/")
+    reports_path = Path(config.get("reports_path", "reports/"))
     reports_path.mkdir(parents=True, exist_ok=True)
     generate_visualizations(gold_df, output_dir=reports_path)
     logger.info("Visualizations generated and saved")
