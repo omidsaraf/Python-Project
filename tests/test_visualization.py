@@ -1,19 +1,8 @@
-import pytest
+from src.visualization import generate_plot
 import pandas as pd
-import os
-from src.visualization import plot_customer_transactions
 
-def test_plot_customer_transactions_creates_file(tmp_path):
-    data = {
-        'total_transactions': [1, 2, 3, 4, 5, 5, 3]
-    }
-    df = pd.DataFrame(data)
-    output_file = tmp_path / "histogram.png"
-    plot_customer_transactions(df, str(output_file))
-    assert output_file.exists()
-
-def test_plot_customer_transactions_empty_df(tmp_path):
-    empty_df = pd.DataFrame()
-    output_file = tmp_path / "histogram.png"
-    plot_customer_transactions(empty_df, str(output_file))
-    assert not output_file.exists()
+def test_generate_plot(tmp_path):
+    df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})
+    output_path = tmp_path / "test_plot.png"
+    generate_plot(df, x_col="x", y_col="y", output_file=str(output_path))
+    assert output_path.exists()
