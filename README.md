@@ -1,19 +1,20 @@
 
-# 📊 Data Pipeline Project with Python (Bronze → Silver → Gold)
+# 📊 Data Pipeline Project with Python & PySpark
+####(Ingest-> Bronze → Silver → Gold->Visual)
 
 ## ✨ Overview
 
 This repository implements a **production-grade, modular Python data pipeline** that processes structured and semi-structured data (CSV/JSON) through a **Medallion architecture (Bronze → Silver → Gold)**. The final output includes analytical insights via **Seaborn-powered visualizations**.
 
-Built with **NSW Government-aligned data engineering best practices**, the project ensures:
+Built with **data engineering best practices**, the project ensures:
 
 * ✅ Rigorous data quality enforcement
 * ✅ Test-driven development with **Pytest**
-* ✅ Continuous Integration/Deployment via **GitHub Actions**
+* ✅ Continuous Integration and Deployment via **GitHub Actions**
 * ✅ Containerization using **Docker**
-* ✅ Support for **Google Colab** notebooks for easy exploration
+* ✅ Support for **PySpark-based Google Colab notebooks** for scalable exploration
 * ✅ Compliance with **PEP8/PEP257**, modularity, traceability, and governance
-* ✅ Enterprise-grade **Security & Data Governance**
+* ✅ Enterprise-grade **Security and Data Governance**
 
 ---
 
@@ -22,7 +23,8 @@ Built with **NSW Government-aligned data engineering best practices**, the proje
 ```plaintext
 data-pipeline/
 │
-├── .gitignore                   # Exclude logs, pycache, .env, secrets, etc.
+├── .gitignore                   # Exclude logs, __pycache__, .env, secrets, etc.
+├── .env                        # Environment variables for secrets & configs (excluded from repo)
 ├── .flake8                      # Code style rules for Flake8
 ├── Dockerfile                   # Containerized runtime environment
 ├── pyproject.toml               # Unified config: black, isort, mypy, flake8
@@ -36,7 +38,7 @@ data-pipeline/
 ├── data/
 │   ├── raw/                     # Source data files (CSV / JSON)
 │   ├── bronze/                  # Raw ingested data (landing zone)
-│   ├── silver/                  # Cleaned, validated data sets
+│   ├── silver/                  # Cleaned, validated datasets
 │   └── gold/                    # Aggregated, enriched KPI datasets
 │
 ├── src/
@@ -54,7 +56,7 @@ data-pipeline/
 │   ├── test_silver_to_gold.py
 │   └── test_visualization.py
 │
-├── notebooks/                   # Google Colab-compatible notebooks for EDA & demos
+├── notebooks/                   # PySpark-based Google Colab-compatible notebooks for scalable EDA & demos
 │   ├── 01_bronze_ingestion.ipynb
 │   ├── 02_silver_cleaning.ipynb
 │   ├── 03_gold_aggregation.ipynb
@@ -81,13 +83,13 @@ data-pipeline/
 
 * Each pipeline stage is self-contained: ingestion, cleaning, aggregation, visualization
 * Central YAML config for paths, parameters, and logging levels
-* Enables future integration with orchestration tools (Airflow, ADF)
+* Enables future integration with orchestration tools (Airflow, Azure Data Factory)
 
 ### 🎓 Rigorous Data Validation & Quality Controls
 
 * Schema enforcement on ingestion (CSV/JSON) with clear error handling
 * Detects and logs duplicates, nulls, and schema mismatches
-* Quarantines invalid/malformed records for audit
+* Quarantines invalid or malformed records for audit
 
 ### 📊 Insight-Ready Visual Outputs
 
@@ -102,13 +104,13 @@ data-pipeline/
 
 * > 90% code coverage via Pytest
 * Tests for ingestion edge cases, transformations, aggregations, and visualization output integrity
-* Continuous integration runs on every push/pull request
+* Continuous integration runs on every push and pull request
 
 ### 🔐 Security & Governance (Enterprise-Grade)
 
 * **Secrets & Credentials Management**
 
-  * No hard-coded secrets in code/configs
+  * No hard-coded secrets in code or configs
   * Supports environment variables and vault integrations (Azure Key Vault, AWS Secrets Manager)
   * `.env` files excluded from source control, with `.env.example` for reference
 
@@ -135,7 +137,7 @@ data-pipeline/
 
 * **Compliance Alignment**
 
-  * Designed for compliance with  Data Security Standards, Privacy Act 1988
+  * Designed for compliance with Data Security Standards, Privacy Act 1988
   * Supports data retention, archival, and purging policies
   * Complete documentation supports governance frameworks
 
@@ -155,13 +157,13 @@ data-pipeline/
 ### Prerequisites
 
 ```bash
-python>=3.9
+python >= 3.9
 pip install -r requirements.txt
 ```
 
 ### Configuration
 
-Modify `configs/pipeline_config.yaml`:
+Edit `configs/pipeline_config.yaml`:
 
 ```yaml
 input_path: "./data/raw/"
@@ -170,6 +172,8 @@ silver_path: "./data/silver/"
 gold_path: "./data/gold/"
 log_level: "INFO"
 ```
+
+Create a `.env` file locally (excluded from repo) or use environment variables for secrets.
 
 ---
 
@@ -241,7 +245,7 @@ def ingest_files(input_dir: str, supported_formats: List[str] = ['csv', 'json'])
 
 ## 🚀 CI/CD via GitHub Actions
 
-Triggered automatically on every push and pull request, the pipeline includes:
+Automatically triggered on every push and pull request, the pipeline includes:
 
 * ✅ Linting using **Flake8**
 * ✅ Unit testing using **Pytest** with coverage reports
@@ -249,7 +253,7 @@ Triggered automatically on every push and pull request, the pipeline includes:
 * ✅ Static typing checks with **Mypy**
 * ✅ Security scans using **Bandit** for Python vulnerabilities
 
-Configured in: `.github/workflows/python-pipeline.yml`
+Configured in `.github/workflows/python-pipeline.yml`
 
 ---
 
@@ -269,15 +273,21 @@ docker run --rm -v "$PWD":/app datapipeline:latest python run_pipeline.py --conf
 
 ---
 
-## 📓 Google Colab Notebooks
+## 📓 PySpark Notebooks
 
-Explore the pipeline step-by-step using the provided Jupyter notebooks in `/notebooks/` — fully compatible with Google Colab for free cloud execution.
+Explore the pipeline step-by-step using the provided **PySpark-based** Jupyter notebooks in `/notebooks/` — fully compatible with Google Colab and scalable Spark clusters.
 
-Each notebook prepends the `src` directory to Python path:
+Each notebook prepends the `src` directory to Python path and initializes Spark:
 
 ```python
 import sys
 sys.path.append('../src')
+
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder \
+    .appName("Data Pipeline EDA") \
+    .getOrCreate()
 ```
 
 Notebook workflow:
@@ -299,4 +309,3 @@ Created by a **Senior Data Engineer**, specializing in:
 * Cloud-agnostic, scalable architectures
 
 ---
-
