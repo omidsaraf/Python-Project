@@ -1,3 +1,34 @@
+# .flake8
+
 [flake8]
+# Maximum line length per PEP8 recommendation for readability
 max-line-length = 88
-extend-ignore = E203, W503
+
+# Exclude virtual environments, data folders, build artifacts
+exclude = 
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    build,
+    dist,
+    .eggs,
+    *.egg-info,
+    data/
+
+# Enable useful error/warning codes
+select = B,C,E,F,W,T4,B9
+
+# Ignore specific warning types to reduce noise (can be tuned)
+ignore = 
+    E203,  # Whitespace before ':', conflicts with black
+    E266,  # Too many leading '#' for block comments
+    E501,  # Line length (Black handles this)
+    W503,  # Line break before binary operator
+
+# Show source code for each error
+show-source = true
+
+# Enable per-file-ignores if needed (e.g. for tests or notebooks)
+per-file-ignores = 
+    tests/*: S101  # Allow assertions in tests
