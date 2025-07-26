@@ -1,7 +1,18 @@
+# Input directory containing raw source files (CSV/JSON)
 input_path: "./data/raw/"
+
+# Bronze layer: landing zone for ingested raw data
 bronze_path: "./data/bronze/"
+
+# Silver layer: cleaned and validated datasets
 silver_path: "./data/silver/"
+
+# Gold layer: aggregated and enriched KPI datasets
 gold_path: "./data/gold/"
 
+# Logging level: DEBUG, INFO, WARNING, ERROR, or CRITICAL
 log_level: "INFO"
-visual_output_dir: "./data/gold/visuals/"
+
+# Optional: Other runtime parameters can be added here, e.g.:
+# max_retry_attempts: 3
+# quarantine_path: "./data/quarantine/"
