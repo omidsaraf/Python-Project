@@ -135,7 +135,7 @@ data-pipeline/
 
 * **Compliance Alignment**
 
-  * Designed for compliance with NSW Government Data Security Standards, Privacy Act 1988
+  * Designed for compliance with  Data Security Standards, Privacy Act 1988
   * Supports data retention, archival, and purging policies
   * Complete documentation supports governance frameworks
 
