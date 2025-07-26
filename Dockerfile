@@ -1,30 +1,32 @@
-# Use official Python image as base
+# Use official lightweight Python image (slim for smaller size)
 FROM python:3.9-slim
 
-# Metadata labels
-LABEL maintainer="Your Name <you@example.com>"
-LABEL description="Modular Data Pipeline for CSV/JSON Ingestion and Visualization"
+# Set environment variables for Python
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    gcc \
-    git \
-    && rm -rf /var/lib/apt/lists/*
-
-# Create and set working directory
+# Set workdir inside container
 WORKDIR /app
 
+# Install system dependencies required for pandas, etc.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy only requirements first for Docker layer caching
+COPY requirements.txt .
+
+# Upgrade pip and install python dependencies
+RUN python -m pip install --upgrade pip setuptools wheel
+RUN pip install --no-cache-dir -r requirements.txt
+
 # Copy project files
-COPY . /app/
+COPY . .
 
-# Install Python dependencies
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# Expose port if your pipeline serves anything (optional)
+# EXPOSE 8080
 
-# Default command (can override in docker run)
+# Default command: run pipeline with config
 CMD ["python", "run_pipeline.py", "--config", "configs/pipeline_config.yaml"]
