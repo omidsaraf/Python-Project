@@ -2,12 +2,6 @@ input_path: "./data/raw/"
 bronze_path: "./data/bronze/"
 silver_path: "./data/silver/"
 gold_path: "./data/gold/"
-log_level: "INFO"
 
-# Optional: Add schema expectations
-expected_columns:
-  - customer_id
-  - first_name
-  - last_name
-  - email
-  - registration_date
+log_level: "INFO"
+visual_output_dir: "./data/gold/visuals/"
