@@ -1,32 +1,59 @@
-ef clean_data(df: pd.DataFrame) -> pd.DataFrame:
-    """Clean and standardize the ingested raw data."""
-    logger.info("Cleaning data...")
-    df = df.drop_duplicates()
-    df = df.dropna(how='all')
+# src/bronze_to_silver.py
+
+import logging
+from typing import Optional
+import pandas as pd
+
+logger = logging.getLogger(__name__)
+
+def clean_and_standardize(bronze_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Cleans and standardizes the raw Bronze layer data to create Silver layer dataset.
+    
+    Steps include:
+    - Drop duplicates
+    - Handle missing values (simple fill or drop)
+    - Standardize column names and types
+    - Filter out invalid rows
+    - Add/update audit columns if needed
+
+    Args:
+        bronze_df (pd.DataFrame): Raw ingested data (Bronze layer).
+
+    Returns:
+        pd.DataFrame: Cleaned and standardized Silver layer data.
+    """
+    if bronze_df.empty:
+        logger.warning("Received empty Bronze DataFrame for cleaning.")
+        return bronze_df
+
+    # Drop exact duplicates
+    before_count = len(bronze_df)
+    df = bronze_df.drop_duplicates()
+    after_count = len(df)
+    logger.info(f"Dropped {before_count - after_count} duplicate records.")
+
+    # Handle missing values - example strategy:
+    # Drop rows where 'id' or 'name' is missing (critical columns)
+    df = df.dropna(subset=['id', 'name'])
+    logger.info(f"Removed rows with missing 'id' or 'name'. Remaining records: {len(df)}")
+
+    # Standardize column names (lowercase, underscores)
+    df.columns = [col.strip().lower().replace(" ", "_") for col in df.columns]
+
+    # Convert id column to string type (for consistency)
+    df['id'] = df['id'].astype(str)
+
+    # Example of standardizing date columns if present
+    if 'date' in df.columns:
+        df['date'] = pd.to_datetime(df['date'], errors='coerce')
+        null_dates = df['date'].isnull().sum()
+        if null_dates > 0:
+            logger.warning(f"Found {null_dates} rows with invalid dates.")
+
+    # Add audit column (e.g., cleaned_timestamp)
+    df['cleaned_timestamp'] = pd.Timestamp.now()
+
+    logger.info(f"Silver layer data prepared with {len(df)} records.")
+
     return df
-
-# src/silver_to_gold.py
-
-def aggregate_data(df: pd.DataFrame) -> pd.DataFrame:
-    """Aggregate and enrich the cleaned data to prepare final KPIs."""
-    logger.info("Aggregating data...")
-    if 'value' in df.columns:
-        return df.groupby('category').agg({'value': 'sum'}).reset_index()
-    return df
-
-# src/visualization.py
-
-import seaborn as sns
-import matplotlib.pyplot as plt
-
-def plot_kpis(df: pd.DataFrame, output_path: str):
-    """Generate seaborn bar plot of KPI data."""
-    logger.info("Generating visualization...")
-    plt.figure(figsize=(10, 6))
-    sns.barplot(data=df, x='category', y='value')
-    plt.xticks(rotation=45)
-    plt.title('KPI Summary by Category')
-    plt.tight_layout()
-    plot_file = os.path.join(output_path, "kpi_summary.png")
-    plt.savefig(plot_file)
-    logger.info(f"Visualization saved to {plot_file}")
