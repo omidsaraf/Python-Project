@@ -11,7 +11,7 @@ Built with enterprise-grade best practices, the pipeline supports data quality, 
 ## Architecture
 
 ```
-/nsw-data-pipeline/
+/data-pipeline/
 │
 ├── configs/
 │   └── pipeline_config.yaml        # Configurable parameters and paths
@@ -23,22 +23,31 @@ Built with enterprise-grade best practices, the pipeline supports data quality, 
 │   └── gold/                      # Aggregated, KPI-ready data
 │
 ├── src/
+│   ├── __init__.py                # Makes 'src' a package
 │   ├── ingestion.py               # Handles file ingestion and raw data validation
 │   ├── bronze_to_silver.py        # Cleans and standardizes raw data
 │   ├── silver_to_gold.py          # Aggregates and enriches data for analysis
 │   ├── visualization.py           # Generates Seaborn visualizations
 │   ├── utils.py                   # Utility functions (logging, config parsing)
-│   └── tests/                     # Pytest test cases for each module
-│       ├── test_ingestion.py
-│       ├── test_bronze_to_silver.py
-│       └── test_silver_to_gold.py
-│
+|
+├── tests/                         # Pytest test cases for each module
+│   ├── __init__.py                # Makes 'tests' a package
+│   ├── test_ingest.py
+│   ├── test_bronze_to_silver.py
+│   ├── test_silver_to_gold.py
+│   ├── test_visualization.py
+|
 ├── requirements.txt               # Python dependencies
 ├── run_pipeline.py                # Entry point for running the entire pipeline
+├── Dockerfile
+├── .github/
+│   └── workflows/
+│       └── python-pipeline.yml
+├── pyproject.toml
+└── .flake8
 ├── README.md                     # This file
 └── .gitignore                    # Standard gitignore rules
 ```
-
 ---
 
 ## Features and Best Practices
