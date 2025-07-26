@@ -5,70 +5,69 @@ import pandas as pd
 from datetime import datetime
 import logging
 
-logger = logging.getLogger("nsw_data_pipeline.silver_to_gold")
 logger = logging.getLogger(__name__)
 
-def aggregate_customer_data(df: pd.DataFrame) -> pd.DataFrame:
-def aggregate_and_enrich(silver_df: pd.DataFrame) -> pd.DataFrame:
-"""
+def aggregate_and_enrich(silver_df: pd.DataFrame, threshold: float = 100.0) -> pd.DataFrame:
+    """
     Aggregates and enriches silver layer data to produce KPIs and summary info for gold layer.
-    Example aggregations:
-    - Count of transactions per customer
-    - Average order value, etc.
-    Aggregate and enrich Silver layer data to produce KPI-ready Gold layer.
 
-    This example assumes silver_df contains cleaned data with at least:
-    - 'id' (string or int)
-    - 'date' (datetime)
-    - 'value' (numeric)
+    Expects silver_df with at least the following columns:
+    - 'id' (string or int): Unique customer identifier
+    - 'date' (datetime or string): Transaction or event date
+    - 'value' (numeric): Numeric value for aggregation
 
-    Aggregations:
-    - Total count per id
-    - Sum of 'value' per id
-    - Average 'value' per id
-    - Most recent 'date' per id
-    - KPI flag: high_value = True if sum(value) > threshold (e.g., 100)
+    Aggregations performed:
+    - total_count: count of records per 'id'
+    - sum_value: sum of 'value' per 'id'
+    - avg_value: average of 'value' per 'id'
+    - last_date: most recent 'date' per 'id'
+    - high_value: boolean KPI flag where sum_value > threshold
+
+    Adds audit column 'kpi_generated_at' with current UTC timestamp.
+
+    Parameters:
+        silver_df (pd.DataFrame): Input cleaned silver layer data.
+        threshold (float): Threshold to flag high_value KPI.
 
     Returns:
-        pd.DataFrame: Gold dataset with aggregated KPIs.
-   """
-    if df.empty:
-        logger.warning("Input DataFrame is empty. Skipping aggregation.")
-        return df
-
-    logger.info("Starting data aggregation for Gold layer...")
+        pd.DataFrame: Aggregated Gold layer DataFrame with KPIs.
+    """
     if silver_df.empty:
         logger.warning("Input silver_df is empty. Returning empty DataFrame.")
         return pd.DataFrame()
 
-    # Example aggregation by customer_id
-    grouped = df.groupby('customer_id').agg(
-        total_transactions=pd.NamedAgg(column='transaction_id', aggfunc='count'),
-        avg_transaction_value=pd.NamedAgg(column='transaction_value', aggfunc='mean')
-    # Ensure 'date' is datetime
+    logger.info("Starting aggregation and enrichment for Gold layer.")
+
+    # Ensure 'date' column is datetime type
     if 'date' in silver_df.columns:
         silver_df['date'] = pd.to_datetime(silver_df['date'], errors='coerce')
     else:
-        logger.warning("'date' column not found in silver_df.")
+        logger.warning("'date' column not found in silver_df. Results may be incomplete.")
 
-    # Fill missing values for aggregation columns
+    # Ensure 'value' column exists and is numeric
+    if 'value' not in silver_df.columns:
+        logger.error("'value' column not found in silver_df. Cannot perform aggregation.")
+        return pd.DataFrame()
     silver_df['value'] = pd.to_numeric(silver_df['value'], errors='coerce').fillna(0)
 
+    # Ensure 'id' column exists
+    if 'id' not in silver_df.columns:
+        logger.error("'id' column not found in silver_df. Cannot perform aggregation.")
+        return pd.DataFrame()
+
+    # Perform aggregation
     grouped = silver_df.groupby('id').agg(
         total_count=pd.NamedAgg(column='id', aggfunc='count'),
         sum_value=pd.NamedAgg(column='value', aggfunc='sum'),
         avg_value=pd.NamedAgg(column='value', aggfunc='mean'),
         last_date=pd.NamedAgg(column='date', aggfunc='max')
-).reset_index()
+    ).reset_index()
 
-    logger.info(f"Aggregated to {len(grouped)} customer records.")
-    # KPI flag: high_value (example threshold 100)
-    threshold = 100
+    # KPI flag
     grouped['high_value'] = grouped['sum_value'] > threshold
 
-    # Add audit columns
+    # Audit timestamp
     grouped['kpi_generated_at'] = datetime.utcnow()
 
-    logger.info(f"Aggregated {len(grouped)} records into Gold layer.")
-
-return grouped
+    logger.info(f"Aggregation complete: {len(grouped)} records aggregated for Gold layer.")
+    return grouped
