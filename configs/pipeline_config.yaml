@@ -1,18 +1,40 @@
-# Input directory containing raw source files (CSV/JSON)
+# 📥 Input directory containing raw source files (CSV/JSON)
 input_path: "./data/raw/"
 
-# Bronze layer: landing zone for ingested raw data
+# 🟤 Bronze layer: landing zone for ingested raw data
 bronze_path: "./data/bronze/"
 
-# Silver layer: cleaned and validated datasets
+# ⚪ Silver layer: cleaned and validated datasets
 silver_path: "./data/silver/"
 
-# Gold layer: aggregated and enriched KPI datasets
+# 🟡 Gold layer: aggregated and enriched KPI datasets
 gold_path: "./data/gold/"
 
-# Logging level: DEBUG, INFO, WARNING, ERROR, or CRITICAL
+# 📊 Directory for saving visualization reports
+reports_path: "./reports/"
+
+# 📁 Directory for pipeline log files
+logs_path: "./logs/"
+
+# 🔍 Logging level: DEBUG, INFO, WARNING, ERROR, or CRITICAL
 log_level: "INFO"
 
-# Optional: Other runtime parameters can be added here, e.g.:
-# max_retry_attempts: 3
+# 🧾 Schema definition for validation
+schema:
+  columns:
+    id:
+      type: string
+      nullable: false
+    name:
+      type: string
+      nullable: false
+    date:
+      type: date
+      nullable: true
+    value:
+      type: float
+      nullable: true
+
+# 🛠️ Optional paths and settings
 # quarantine_path: "./data/quarantine/"
+# max_retry_attempts: 3
