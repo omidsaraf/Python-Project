@@ -5,6 +5,7 @@ import logging.config
 from typing import Any, Dict
 import pandas as pd
 
+
 def load_config(config_path: str) -> Dict[str, Any]:
     """
     Load YAML configuration file with environment variable overrides.
@@ -17,17 +18,18 @@ def load_config(config_path: str) -> Dict[str, Any]:
     """
     if not os.path.exists(config_path):
         raise FileNotFoundError(f"Config file not found at {config_path}")
-    
+
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
-    
-    # Override config keys with environment variables if set
-    for key, value in config.items():
+
+    # Override with environment variables (flat keys only)
+    for key in config:
         env_value = os.getenv(key.upper())
         if env_value is not None:
             config[key] = env_value
 
     return config
+
 
 def setup_logging(default_path: str = 'configs/logging.yaml', default_level: int = logging.INFO) -> None:
     """
@@ -39,17 +41,25 @@ def setup_logging(default_path: str = 'configs/logging.yaml', default_level: int
     """
     if os.path.exists(default_path):
         with open(default_path, 'rt') as f:
-            config = yaml.safe_load(f)  # fixed here: pass file handle directly
+            config = yaml.safe_load(f)
         logging.config.dictConfig(config)
     else:
+        log_dir = "./logs"
+        os.makedirs(log_dir, exist_ok=True)
+
         logging.basicConfig(
             level=default_level,
-            format='%(asctime)s %(levelname)s %(name)s %(message)s'
+            format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+            handlers=[
+                logging.FileHandler(os.path.join(log_dir, "pipeline.log")),
+                logging.StreamHandler()
+            ]
         )
+
 
 def init_logging(log_level: str = "INFO") -> None:
     """
-    Initialize global logging with a specified log level.
+    Initialize basic logging with a specified log level.
 
     Args:
         log_level (str): Logging level as string (e.g., "INFO", "DEBUG").
@@ -60,27 +70,46 @@ def init_logging(log_level: str = "INFO") -> None:
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
         handlers=[logging.StreamHandler()]
     )
-    # Reduce noise from noisy libraries
+
+    # Silence noisy libraries
     logging.getLogger("matplotlib").setLevel(logging.WARNING)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
 
+
 def validate_schema(df: pd.DataFrame, schema: Dict[str, Any]) -> bool:
     """
-    Basic schema validation for a DataFrame.
-
-    Checks required columns are present in df.
+    Validates a DataFrame against a schema dict with column types and nullability.
 
     Args:
-        df (pd.DataFrame): DataFrame to validate.
-        schema (Dict[str, Any]): Schema definition dictionary with 'columns' key.
+        df (pd.DataFrame): Input DataFrame.
+        schema (Dict[str, Any]): Schema config from YAML (expects 'columns').
 
     Returns:
-        bool: True if schema valid, False otherwise.
+        bool: True if schema is valid, False otherwise.
     """
-    required_columns = schema.get("columns", [])
-    for col in required_columns:
-        if col not in df.columns:
-            logging.error(f"Missing required column: {col}")
+    columns = schema.get("columns", {})
+    for col_name, props in columns.items():
+        if col_name not in df.columns:
+            logging.error(f"Missing required column: {col_name}")
             return False
-    # Additional type checks can be added here if needed
+
+        if not props.get("nullable", True) and df[col_name].isnull().any():
+            logging.error(f"Non-nullable column '{col_name}' contains null values.")
+            return False
+
+        expected_type = props.get("type")
+        if expected_type:
+            try:
+                if expected_type == "int":
+                    df[col_name] = pd.to_numeric(df[col_name], errors="coerce").astype("Int64")
+                elif expected_type == "float":
+                    df[col_name] = pd.to_numeric(df[col_name], errors="coerce")
+                elif expected_type == "date":
+                    df[col_name] = pd.to_datetime(df[col_name], errors="coerce")
+                elif expected_type == "string":
+                    df[col_name] = df[col_name].astype(str)
+            except Exception as e:
+                logging.error(f"Type coercion failed for column '{col_name}': {e}")
+                return False
+
     return True
