@@ -11,16 +11,27 @@ from src.visualization import generate_visualizations
 
 
 def main(config_path: Path) -> None:
-    # Load config and setup logging
+    # Load config
     config = load_config(str(config_path))
-    setup_logging(config.get("log_level", "INFO"))
-    logger = logging.getLogger(__name__)
 
+    # Ensure logs directory exists
+    logs_dir = Path(config.get("logs_path", "logs"))
+    logs_dir.mkdir(parents=True, exist_ok=True)
+
+    # Setup logging
+    setup_logging(config.get("log_level", "INFO"))
+
+    logger = logging.getLogger(__name__)
     logger.info("Starting Data Pipeline Execution")
 
-    # Ingest raw data → Bronze layer
+    # Ingest raw data → Bronze
     logger.info("Starting ingestion to Bronze layer")
-    bronze_df = ingest_files(config["input_path"], config["bronze_path"], config.get("schema", {}))
+    bronze_df = ingest_files(
+        config["input_path"],
+        config["bronze_path"],
+        config.get("schema", {})
+    )
+
     if bronze_df.empty:
         logger.warning("No data ingested. Exiting pipeline.")
         sys.exit(1)
