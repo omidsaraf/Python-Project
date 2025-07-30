@@ -3,6 +3,8 @@
 
 #### (Ingest → Bronze → Silver → Gold → Visual)
 
+<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/dc6b56a9-c9d4-4a32-a45d-8070fae98ffb" />
+
 ---
 
 ## ✨ Overview
