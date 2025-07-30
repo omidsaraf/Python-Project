@@ -3,7 +3,7 @@
 
 #### (Ingest → Bronze → Silver → Gold → Visual)
 
-<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/dc6b56a9-c9d4-4a32-a45d-8070fae98ffb" />
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/5963f10a-a3cf-4cc8-b92c-5759e52f8a26" />
 
 ---
 
