@@ -5,8 +5,8 @@ from pathlib import Path
 
 from src.utils import setup_logging, load_config
 from src.ingestion import ingest_files
-from src.bronze_to_silver import bronze_to_silver
-from src.silver_to_gold import silver_to_gold
+from src.bronze_to_silver import clean_bronze_to_silver
+from src.silver_to_gold import aggregate_and_enrich
 from src.visualization import generate_visualizations
 
 
