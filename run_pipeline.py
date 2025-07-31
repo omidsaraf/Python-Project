@@ -44,7 +44,7 @@ def main(config_path: Path) -> None:
 
     # Bronze → Silver transformation
     logger.info("Starting Bronze to Silver transformation")
-    silver_df = bronze_to_silver(bronze_df)
+    silver_df = clean_and_standardize(bronze_df)
     silver_path = Path(config["silver_path"])
     silver_path.mkdir(parents=True, exist_ok=True)
     silver_file = silver_path / "silver_data.parquet"
@@ -53,7 +53,7 @@ def main(config_path: Path) -> None:
 
     # Silver → Gold transformation
     logger.info("Starting Silver to Gold transformation")
-    gold_df = silver_to_gold(silver_df)
+    gold_df = aggregate_and_enrich(silver_df)
     gold_path = Path(config["gold_path"])
     gold_path.mkdir(parents=True, exist_ok=True)
     gold_file = gold_path / "gold_data.parquet"
